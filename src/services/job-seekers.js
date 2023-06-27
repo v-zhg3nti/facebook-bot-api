@@ -23,7 +23,7 @@ async function handler1(userId) {
       `/me/messages?access_token=${access_token}`,
       payload
     );
-
+    console.log(payload);
     return response.data;
   } catch (error) {
     console.error(

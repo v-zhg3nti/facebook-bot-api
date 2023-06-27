@@ -51,6 +51,7 @@ async function distributeEvents(object, messaging, userId) {
         try {
           await createSession({ userId, ...sessionObject });
           res = await jobSeekers[`handler${sessionObject.stage}`](userId);
+          console.log("sadsdasdasdaasd", res);
         } catch (error) {
           console.error("Error in distributeEvents:", error);
         }
@@ -93,6 +94,7 @@ async function handleWebHookFlow(object, messaging, sessionId) {
           (res) => console.log("updated session", res)
         );
         const res = await service[`handler${stage}`](sessionId, messaging);
+        console.log("pirvelshi shevida meore dailoga",res);
         return res;
       } catch (error) {
         console.error("Error in handleWebHookFlow:", error);

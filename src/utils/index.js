@@ -1,5 +1,5 @@
 function eventEraser(text) {
-  const result = text.replace(/[^a-zA-Z]/g, "");
+  const result = text.replace(/[^a-zA-Z]/g,'');
   return result;
 }
 

@@ -43,7 +43,7 @@ async function handler2(sessionId, messaging) {
   try {
     const interest = messaging[0]?.message?.quick_reply?.payload;
     // console.log("@@@@@userId", sessionId);
-    console.log("@@@@@@interest", interest);
+    console.log("stage 2", interest);
     const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ემაილ მისამართი რომლითაც დარეგისტრირდით hrbaia.com
      / Before we go to the next step, we want to see if you are registered in our system, please write us the email address you registered with hrbaia.com`;
     const payload = {

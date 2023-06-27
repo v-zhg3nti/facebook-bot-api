@@ -15,7 +15,6 @@ async function handler1(userId) {
   const textENG = "In which position you looking for job?";
   const textRU = "какой должности вы ищете работу? ?";
   const text = `${textGE} / ${textENG} / ${textRU}`;
-
   const payload = createPayload(userId, text, handler1Payload);
 
   try {
@@ -73,9 +72,8 @@ async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
 
   const user = await getUser({ phoneNumber });
- 
-  // const nextStage = Object.keys(user).length ? 
 
+  // const nextStage = Object.keys(user).length ?
 }
 
 async function handlePositive() {}

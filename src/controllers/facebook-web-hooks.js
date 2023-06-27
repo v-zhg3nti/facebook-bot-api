@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const webHookServices = require("../services/web-hook-services");
 
-router.get("/webhook", (req, res) => {
+router.get("/webhook", async (req, res) => {
   try {
-    const result = webHookServices.authorizeWebHook(req.query);
+    const result = await webHookServices.authorizeWebHook(req.query);
 
     if (result.status === 200) {
       res.status(result.status).send(result.challenge);

@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const {
   server: { port },
 } = require("./src/config/index");
+
 const webHookRouter = require("./src/controllers/facebook-web-hooks");
 
 app.use(bodyParser.urlencoded({ extended: false }));

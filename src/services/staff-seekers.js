@@ -6,16 +6,15 @@ const {
 } = require("../config/index");
 
 const { createPayload } = require("../utils/index");
-const { handler1Payload } = require("../data/index");
+const { handler2Payload } = require("../data/index");
 const { updateSession, getSession } = require("./session-services");
 const { getUser } = require("./user-services");
-
+console.log(handler2Payload);
 async function handler1(userId) {
-  const textGE = "რა პოზიციაზე ეძებთ სამსახურს ?";
-  const textENG = "In which position you looking for job?";
-  const textRU = "какой должности вы ищете работу? ?";
-  const text = `${textGE} / ${textENG} / ${textRU}`;
-  const payload = createPayload(userId, text, handler1Payload);
+  const textGE = "რა პოზიციაზე ეძებთ თანამშრომელს ?";
+  const textENG = "In which position you looking for staff?";
+  const text = `${textGE} / ${textENG} `;
+  const payload = createPayload(userId, text, handler2Payload);
 
   try {
     const request = axiosInstance();
@@ -38,10 +37,11 @@ async function handler1(userId) {
 }
 
 async function handler2(sessionId, messaging) {
+  console.log(sessionId, messaging);
   try {
     const interest = messaging[0]?.message?.quick_reply?.payload;
     const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ემაილ მისამართი რომლითაც დარეგისტრირდით hrbaia.com
-     / Before we go to the next step, we want to see if you are registered in our system, please write us the email address you registered with hrbaia.com`;
+       / Before we go to the next step, we want to see if you are registered in our system, please write us the email address you registered with hrbaia.com`;
     const payload = {
       messaging_type: "RESPONSE",
       recipient: {
@@ -58,6 +58,7 @@ async function handler2(sessionId, messaging) {
       `/me/messages?access_token=${access_token}`,
       payload
     );
+    console.log(response);
     return response;
   } catch (error) {
     console.log("error acquired in handler 2: ", error);
@@ -70,11 +71,10 @@ async function handler3(sessionId, messaging) {
 
   const user = await getUser({ phoneNumber });
 
+  //   console.log(user);
+
   // const nextStage = Object.keys(user).length ?
 }
-
-async function handlePositive() {}
-async function handleNegative() {}
 
 module.exports = {
   handler1,

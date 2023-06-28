@@ -1,3 +1,4 @@
+require('dotenv').config();
 module.exports = {
   server: {
     port: process.env.PORT,
@@ -6,3 +7,4 @@ module.exports = {
   },
   facebook: { graph_base_url: process.env.GRAPH_BASE_URL, access_token: process.env.ACCESS_TOKEN },
 };
+

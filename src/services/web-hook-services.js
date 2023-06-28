@@ -1,7 +1,7 @@
 const {
   server: { verify_token },
 } = require("../config/index");
-const { eventEraser } = require("../utils");
+const { eventEraser } = require("../utils/index");
 const {
   LOOKING_FOR_JOB,
   PAGE,
@@ -40,7 +40,8 @@ async function distributeEvents(object, messaging, userId) {
   if (object === PAGE) {
     const eventText = messaging[0]?.message?.text;
     const event = eventEraser(eventText);
-
+   // console.log("eventText",eventText)
+   // console.log("event",event)
     switch (event) {
       case LOOKING_FOR_JOB: {
         const sessionObject = {
@@ -75,18 +76,21 @@ function serviceDistribution(serviceName) {
       selectedService = null;
       break;
   }
-
+  //console.log('selectedService',selectedService)
   return selectedService;
 }
 
 async function handleWebHookFlow(object, messaging, sessionId) {
   try {
     const userSession = await getSession(sessionId);
-
+    //console.log("fg",userSession)
+    //console.log("useSession",userSession)
     if (userSession.length) {
       let { _, stage, serviceName } = userSession[0];
-
+      //console.log("serviceName",serviceName)
+      
       const service = serviceDistribution(serviceName);
+      
       try {
         stage = stage + 1;
         await updateSession(sessionId, { sessionId, stage, serviceName }).then(

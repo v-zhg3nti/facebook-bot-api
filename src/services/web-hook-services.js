@@ -9,6 +9,7 @@ const {
   JOB_SEEKERS,
   LOOKING_FOR_STAFF,
   STAFF_SEEKER,
+  NEW_USER,
 } = require("../constants/index");
 
 const jobSeekers = require("./job-seekers");

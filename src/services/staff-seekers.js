@@ -9,7 +9,7 @@ const { createPayload } = require("../utils/index");
 const { handler2Payload } = require("../data/index");
 const { updateSession, getSession } = require("./session-services");
 const { getUser } = require("./user-services");
-console.log(handler2Payload);
+
 async function handler1(userId) {
   const textGE = "რა პოზიციაზე ეძებთ თანამშრომელს ?";
   const textENG = "In which position you looking for staff?";

@@ -83,13 +83,13 @@ async function distributeEvents(object, messaging, userId) {
 
 function serviceDistribution(serviceName) {
   let selectedService = undefined;
-
   switch (serviceName) {
     case JOB_SEEKERS:
       selectedService = jobSeekers;
       break;
     case STAFF_SEEKER:
       selectedService = staffSeeker;
+      break;
     default:
       selectedService = null;
       break;

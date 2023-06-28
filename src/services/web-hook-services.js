@@ -9,10 +9,11 @@ const {
   JOB_SEEKERS,
   LOOKING_FOR_STAFF,
   STAFF_SEEKER,
+  NEW_USER,
 } = require("../constants/index");
+
 const jobSeekers = require("./job-seekers");
 const staffSeeker = require("./staff-seekers");
-
 const {
   createSession,
   updateSession,
@@ -73,6 +74,8 @@ async function distributeEvents(object, messaging, userId) {
         }
         break;
       }
+      default:
+        break;
     }
   }
 
@@ -81,7 +84,6 @@ async function distributeEvents(object, messaging, userId) {
 
 function serviceDistribution(serviceName) {
   let selectedService = undefined;
-
   switch (serviceName) {
     case JOB_SEEKERS:
       selectedService = jobSeekers;

@@ -1,8 +1,10 @@
 require("dotenv").config("../../.env");
+
 const axiosInstance = require("../http/index");
 const {
   facebook: { access_token },
 } = require("../config/index");
+
 const { createPayload } = require("../utils/index");
 const { handler2Payload } = require("../data/index");
 const { updateSession, getSession } = require("./session-services");
@@ -39,8 +41,8 @@ async function handler2(sessionId, messaging) {
   console.log(sessionId, messaging);
   try {
     const interest = messaging[0]?.message?.quick_reply?.payload;
-    const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ემაილ მისამართი რომლითაც დარეგისტრირდით hrbaia.com
-      `;
+    const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ტელეფონის ნომერი მისამართი რომლითაც დარეგისტრირდით hrbaia.com
+       / Before we go to the next step, we want to see if you are registered in our system, please write us the email address you registered with hrbaia.com`;
     const payload = {
       messaging_type: "RESPONSE",
       recipient: {
@@ -63,21 +65,21 @@ async function handler2(sessionId, messaging) {
   }
 }
 
+const userObject = {
+  userName: "",
+  phoneNumber: "",
+  email: "",
+};
+
 async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
+  userObject.phoneNumber = phoneNumber;
   const user = await getUser({ phoneNumber });
 
   try {
     let message = "";
     if (user == null) {
       message = "ასეთი მომხარებელი არ მოიძებნა, თქვენი სახელი?";
-      const userSesion = {
-        userName: null,
-        phoneNumber: phoneNumber,
-        emailAddress: null,
-      };
-
-      await createUser({ sessionId, ...userSesion });
     } else {
       message = "თქვენი მონაცემები ნაპოვნია, ჩვენ მალე დაგიკავშირდებით";
     }
@@ -91,7 +93,6 @@ async function handler3(sessionId, messaging) {
         text: message,
       },
     };
-    await updateSession(sessionId, { userName: "Nika" });
     const request = axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,
@@ -102,14 +103,14 @@ async function handler3(sessionId, messaging) {
     console.log("error acquired in handler 3: ", error);
     throw error;
   }
+
+  // const nextStage = Object.keys(user).length ?
 }
+//adding username to sql
 
 async function handler4(sessionId, messaging) {
   const userName = messaging[0].message?.text;
-  console.log(userName, "es aris username");
-
-  const user = await getUser({ userName });
-  console.log(user);
+  userObject.userName = userName;
   try {
     let message = "მოგვაწოდეთ თქვენი ელ-ფოსტა..";
 
@@ -122,7 +123,6 @@ async function handler4(sessionId, messaging) {
         text: message,
       },
     };
-    await updateUser(555112233, { userName });
     const request = axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,
@@ -133,9 +133,13 @@ async function handler4(sessionId, messaging) {
     console.log("error acquired in handler 4: ", error);
     throw error;
   }
+
+  // const nextStage = Object.keys(user).length ?
 }
 async function handler5(sessionId, messaging) {
   const email = messaging[0].message?.text;
+  userObject.email = email;
+
   try {
     let message = "თქვენ წარმატებით გაიარეთ რეგისტრაცია! <3";
 
@@ -148,7 +152,8 @@ async function handler5(sessionId, messaging) {
         text: message,
       },
     };
-    await updateUser(555112233, { email });
+    await createUser({ sessionId, ...userObject });
+    // await updateUser(555112233, { email });
     const request = axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,

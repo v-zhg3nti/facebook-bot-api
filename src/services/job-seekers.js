@@ -15,7 +15,6 @@ async function handler1(userId) {
   const textENG = "In which position you looking for job?";
   const textRU = "какой должности вы ищете работу? ?";
   const text = `${textGE} / ${textENG} / ${textRU}`;
-
   const payload = createPayload(userId, text, handler1Payload);
 
   try {
@@ -24,7 +23,6 @@ async function handler1(userId) {
       `/me/messages?access_token=${access_token}`,
       payload
     );
-
     return response.data;
   } catch (error) {
     console.error(
@@ -42,8 +40,6 @@ async function handler1(userId) {
 async function handler2(sessionId, messaging) {
   try {
     const interest = messaging[0]?.message?.quick_reply?.payload;
-    // console.log("@@@@@userId", sessionId);
-    console.log("stage 2", interest);
     const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ემაილ მისამართი რომლითაც დარეგისტრირდით hrbaia.com
      / Before we go to the next step, we want to see if you are registered in our system, please write us the email address you registered with hrbaia.com`;
     const payload = {
@@ -73,9 +69,8 @@ async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
 
   const user = await getUser({ phoneNumber });
- 
-  // const nextStage = Object.keys(user).length ? 
 
+  // const nextStage = Object.keys(user).length ?
 }
 
 async function handlePositive() {}

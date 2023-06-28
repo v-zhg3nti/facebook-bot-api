@@ -41,6 +41,7 @@ async function getSession(sessionId) {
       },
       { raw: true }
     );
+    console.log(session);
     return session;
   } catch (error) {
     console.log("error acquired in getSession method: ", error);

@@ -41,7 +41,7 @@ async function handler2(sessionId, messaging) {
   console.log(sessionId, messaging);
   try {
     const interest = messaging[0]?.message?.quick_reply?.payload;
-    const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ემაილ მისამართი რომლითაც დარეგისტრირდით hrbaia.com
+    const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ტელეფონის ნომერი მისამართი რომლითაც დარეგისტრირდით hrbaia.com
        / Before we go to the next step, we want to see if you are registered in our system, please write us the email address you registered with hrbaia.com`;
     const payload = {
       messaging_type: "RESPONSE",
@@ -65,23 +65,21 @@ async function handler2(sessionId, messaging) {
   }
 }
 
+const userObject = {
+  userName: "",
+  phoneNumber: "",
+  email: "",
+};
+
 async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
-
+  userObject.phoneNumber = phoneNumber;
   const user = await getUser({ phoneNumber });
 
   try {
     let message = "";
-
     if (user == null) {
       message = "ასეთი მომხარებელი არ მოიძებნა, თქვენი სახელი?";
-      const userSesion = {
-        userName: null,
-        phoneNumber: phoneNumber,
-        emailAddress: null,
-      };
-
-      await createUser({ sessionId, ...userSesion });
     } else {
       message = "თქვენი მონაცემები ნაპოვნია, ჩვენ მალე დაგიკავშირდებით";
     }
@@ -95,7 +93,6 @@ async function handler3(sessionId, messaging) {
         text: message,
       },
     };
-    await updateSession(sessionId, { userName: "alex" });
     const request = axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,
@@ -113,17 +110,9 @@ async function handler3(sessionId, messaging) {
 
 async function handler4(sessionId, messaging) {
   const userName = messaging[0].message?.text;
-  console.log(userName, "es aris username");
-
-  const user = await getUser({ userName });
-  console.log(user);
+  userObject.userName = userName;
   try {
     let message = "მოგვაწოდეთ თქვენი ელ-ფოსტა..";
-    // const userSesion = {
-    //   userName: userName,
-    //   // phoneNumber: phoneNumber,
-    //   emailAddress: null,
-    // };
 
     const payload = {
       messaging_type: "RESPONSE",
@@ -134,7 +123,6 @@ async function handler4(sessionId, messaging) {
         text: message,
       },
     };
-    await updateUser(555112233, { userName });
     const request = axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,
@@ -150,16 +138,10 @@ async function handler4(sessionId, messaging) {
 }
 async function handler5(sessionId, messaging) {
   const email = messaging[0].message?.text;
-  console.log(email, "es aris username");
-  // const user = await getUser({ phoneNumber });
+  userObject.email = email;
 
   try {
     let message = "თქვენ წარმატებით გაიარეთ რეგისტრაცია! <3";
-    // const userSesion = {
-    //   userName: userName,
-    //   // phoneNumber: phoneNumber,
-    //   emailAddress: null,
-    // };
 
     const payload = {
       messaging_type: "RESPONSE",
@@ -170,7 +152,8 @@ async function handler5(sessionId, messaging) {
         text: message,
       },
     };
-    await updateUser(555112233, { email });
+    await createUser({ sessionId, ...userObject });
+    // await updateUser(555112233, { email });
     const request = axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,

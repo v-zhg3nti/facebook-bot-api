@@ -93,6 +93,7 @@ async function handleWebHookFlow(object, messaging, sessionId) {
       
       try {
         stage = stage + 1;
+        console.log("Stage ",stage)
         await updateSession(sessionId, { sessionId, stage, serviceName }).then(
           (res) => console.log("updated session", res)
         );

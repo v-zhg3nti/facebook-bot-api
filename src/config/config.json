@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "baia_admin",
-    "password": null,
+    "password": "Nutsubidze99",
     "database": "baia_chat",
     "host": "localhost",
     "dialect": "mysql"

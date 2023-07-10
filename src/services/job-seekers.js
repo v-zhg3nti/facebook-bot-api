@@ -7,22 +7,18 @@ const {
 
 const { createPayload } = require("../utils/index");
 const { handler1Payload } = require("../data/index");
-const { updateSession, getSession,filterSessions } = require("./session-services");
-
-const { getUser, createUsers,updateUseer } = require("./user-services");
-const {filterJobs} =require('./jobs-service');
-
+const { updateSession, getSession } = require("./session-services");
+const { getUser } = require("./user-services");
 
 async function handler1(userId) {
   const textGE = "რა პოზიციაზე ეძებთ სამსახურს ?";
   const textENG = "In which position you looking for job?";
   const textRU = "какой должности вы ищете работу? ?";
   const text = `${textGE} / ${textENG} / ${textRU}`;
-
   const payload = createPayload(userId, text, handler1Payload);
 
   try {
-    const request = await axiosInstance();
+    const request = axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,
       payload
@@ -44,8 +40,6 @@ async function handler1(userId) {
 async function handler2(sessionId, messaging) {
   try {
     const interest = messaging[0]?.message?.quick_reply?.payload;
-    // console.log("@@@@@userId", sessionId);
-    console.log("@@@@@@interest", interest);
     const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ემაილ მისამართი რომლითაც დარეგისტრირდით hrbaia.com
      / Before we go to the next step, we want to see if you are registered in our system, please write us the email address you registered with hrbaia.com`;
     const payload = {
@@ -57,16 +51,13 @@ async function handler2(sessionId, messaging) {
         text: message,
       },
     };
+    console.log("@@@@@sessinId", sessionId);
     await updateSession(sessionId, { interest });
-    const request = await axiosInstance();
+    const request = axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,
       payload
     );
-
-    console.log("response data222", response.data);
-    console.log("payload2222", payload);
-
     return response;
   } catch (error) {
     console.log("error acquired in handler 2: ", error);
@@ -74,130 +65,12 @@ async function handler2(sessionId, messaging) {
   }
 }
 
-
 async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
-  const message = `თქვენ არ ხართ რეგისტრირებული, გთხოვთ მოგვწეროთ თქვენი სახელი /you aren't registrated yet`;
 
-  try {
-    const user = await getUser({ phoneNumber });
-    console.log("userLength#@#$$ ", user);
-    if (user !== null) {
-      try {
-        const fltersession =await filterSessions(sessionId);
-        const filterjobs= await filterJobs(fltersession[0].interest);
-        const message = `ტქვენ უკვე რეგისტრირებული ხართ იხილეთ ვაკანსიები/you has already been registrated see our vaccancies 
-        ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}
-        `;
-        const payload = {
-          messaging_type: "RESPONSE",
-          recipient: {
-            id: sessionId,
-          },
-          message: {
-            text: message,
-          },
-        };
-        const request = await axiosInstance();
-        const response = await request.post(
-          `/me/messages?access_token=${access_token}`,
-          payload
-        );
-        console.log("response 33333", response.data);
-        return response;
-      } catch (error) {}
-    }
-    
+  const user = await getUser({ phoneNumber });
 
-    const payload = {
-      messaging_type: "RESPONSE",
-      recipient: {
-        id: sessionId,
-      },
-      message: {
-        text: message,
-      },
-    };
-
-    const request = await axiosInstance();
-    const response = await request.post(
-      `/me/messages?access_token=${access_token}`,
-      payload
-    );
-    await createUsers({userId: sessionId, phoneNumber: phoneNumber});
-    console.log("response 33333", response.data);
-    return response;
-  } catch (error) {}
-
-}
-
-async function handler4(sessionId, messaging) {
-  const userName = messaging[0].message?.text;
-  const message = `თქვენი მეილი/your email;`;
-
-  try {
-
-    const payload = {
-      messaging_type: "RESPONSE",
-      recipient: {
-        id: sessionId,
-      },
-      message: {
-        text: message,
-      },
-    };
-
-    console.log("sessionId ",sessionId)
-    await updateUseer(sessionId, {userName: userName})
-    const request = await axiosInstance();
-    const response = await request.post(
-      `/me/messages?access_token=${access_token}`,
-      payload
-    );
-    console.log("response 33333", response.data);
-    return response;
-  } catch (error) {}
-}
-
-async function handler5(sessionId, messaging) {
-  const userEmail = messaging[0].message?.text;
-
-
-
-  const message = `თქვენ უკვე რეგისტრირებული ხართ იხილეთ ვაკანსიები/you has already been registrated see our vaccancies 
-  
-  `;
-
-  try {
-
-    const fltersession =await filterSessions(sessionId);
-    const filterjobs= await filterJobs(fltersession[0].interest);
- 
-  
-    const message = `თქვენ უკვე რეგისტრირებული ხართ იხილეთ ვაკანსიები/you has already been registrated see our vaccancies: 
-    ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}
-  `;
-   
-    const payload = {
-      messaging_type: "RESPONSE",
-      recipient: {
-        id: sessionId,
-      },
-      message: {
-        text: message,
-      },
-    };
-
-    await updateUseer(sessionId, {email: userEmail})
-
-    const request = await axiosInstance();
-    const response = await request.post(
-      `/me/messages?access_token=${access_token}`,
-      payload
-    );
-
-    return response;
-  } catch (error) {}
+  // const nextStage = Object.keys(user).length ?
 }
 
 async function handlePositive() {}
@@ -207,6 +80,4 @@ module.exports = {
   handler1,
   handler2,
   handler3,
-  handler4,
-  handler5,
 };

@@ -3,52 +3,52 @@ const quickReplies = {
     {
       content_type: "text",
       title: "🔘 ძიძა / babysitter",
-      payload: "Babysitter",
+      payload: "babysitter",
     },
     {
       content_type: "text",
       title: "🔴 ოჯახში დამხმარე / Helper in family",
-      payload: "Family_helper",
+      payload: "family_helper",
     },
     {
       content_type: "text",
       title: "🟠 ავადმყოფის მომვლელი / Caregiver of the sick",
-      payload: "Caregiver",
+      payload: "caregiver",
     },
     {
       content_type: "text",
       title: "🟡 გუვერნანტი / governess",
-      payload: "Governess",
+      payload: "governess",
     },
     {
       content_type: "text",
       title: "🟢 დამლაგებელი / cleaner",
-      payload: "Cleaner",
+      payload: "cleaner",
     },
     {
       content_type: "text",
       title: "🔵 საბავშვო ბაღის აღმზრდელი / Kindergarten teacher",
-      payload: "Kindergarten",
+      payload: "kindergarten",
     },
     {
       content_type: "text",
       title: "🟣 ოჯახური წყვილები / married couples",
-      payload: "Couples",
+      payload: "couples",
     },
     {
       content_type: "text",
       title: "🟤 მძღოლი / driver",
-      payload: "Driver",
+      payload: "driver",
     },
     {
       content_type: "text",
       title: "⚫ დასაქმება საზღვარგარეთ / Employment abroad",
-      payload: "Abroad",
+      payload: "abroad",
     },
     {
       content_type: "text",
       title: "⚪ მზარეული / cook",
-      payload: "Cook",
+      payload: "cook",
     },
   ],
   handler2Payload: [

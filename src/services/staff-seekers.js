@@ -4,16 +4,20 @@ const axiosInstance = require("../http/index");
 const {
   facebook: { access_token },
 } = require("../config/index");
+
 const { createPayload } = require("../utils/index");
 const { handler2Payload } = require("../data/index");
 const { updateSession, getSession } = require("./session-services");
 const { getUser } = require("./user-services");
 const { createUser, updateUser } = require("./session-user");
+// const { getJobs } = require("./jobs-service")
 
 async function handler1(userId) {
   const textGE = "რა პოზიციაზე ეძებთ თანამშრომელს ?";
   const textENG = "In which position you looking for staff?";
   const text = `${textGE} / ${textENG} `;
+  // const jobs = await getJobs({jobs:"jobs"})
+  // console.log(jobs, "jooobobss staff seeker");
   const payload = createPayload(userId, text, handler2Payload);
 
   try {
@@ -70,17 +74,6 @@ const userObject = {
   email: "",
 };
 
-function isValidPhoneNumber(phoneNumber) {
-  if (typeof phoneNumber !== 'string') {
-    return false;
-  }
-  if (phoneNumber.length < 9) {
-    return false;
-  }
-  return /^\d{10}$/.test(phoneNumber);
-}
-
-
 async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
   userObject.phoneNumber = phoneNumber;
@@ -113,7 +106,10 @@ async function handler3(sessionId, messaging) {
     console.log("error acquired in handler 3: ", error);
     throw error;
   }
+
+  // const nextStage = Object.keys(user).length ?
 }
+//adding username to sql
 
 async function handler4(sessionId, messaging) {
   const userName = messaging[0].message?.text;
@@ -140,14 +136,16 @@ async function handler4(sessionId, messaging) {
     console.log("error acquired in handler 4: ", error);
     throw error;
   }
-}
 
+  // const nextStage = Object.keys(user).length ?
+}
 async function handler5(sessionId, messaging) {
   const email = messaging[0].message?.text;
   userObject.email = email;
 
   try {
     let message = "თქვენ წარმატებით გაიარეთ რეგისტრაცია! <3";
+
     const payload = {
       messaging_type: "RESPONSE",
       recipient: {
@@ -158,6 +156,7 @@ async function handler5(sessionId, messaging) {
       },
     };
     await createUser({ sessionId, ...userObject });
+    // await updateUser(555112233, { email });
     const request = axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,
@@ -168,6 +167,8 @@ async function handler5(sessionId, messaging) {
     console.log("error acquired in handler 4: ", error);
     throw error;
   }
+
+  // const nextStage = Object.keys(user).length ?
 }
 
 module.exports = {

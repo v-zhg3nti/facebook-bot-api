@@ -1,21 +1,22 @@
-const {Damkveti} = require('../models/index');
+const { Kvelashekveta7 } = require("../models/index");
 
 
-async function filterVacancy(event) {
-    try {
-      const filtervacancy = await Damkveti.findAll({
-          where: { pozicia: event },
-        });
-       
-      return filtervacancy;
-    } catch (error) {
-      console.log("error acquired in createSession method: ", error);
-      throw error;
-    }
+async function filterDelivery(event) {
+  try {
+    const filtereDeliver = await Kvelashekveta7.findAll({
+        where: { 
+            pozicia: event,
+        },
+      });
+     
+    return filtereDeliver;
+  } catch (error) {
+    console.log("error acquired in createSession method: ", error);
+    throw error;
   }
-  
-  
-  module.exports = {
-    filterVacancy
-  };
-  
+}
+
+
+module.exports = {
+    filterDelivery
+};

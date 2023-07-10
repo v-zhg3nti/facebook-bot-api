@@ -14,8 +14,8 @@ const {
 } = require("./session-services");
 
 const { getUser, createUsers, updateUseer } = require("./user-services");
-const {filterVacancy} = require('./delivery-services');
 const { filterJobs } = require("./jobs-service");
+const {filterDelivery} = require('./delivery-services');
 
 async function handler1(userId) {
   const textGE = "რა პოზიციაზე ეძებთ სამსახურს ?";
@@ -167,16 +167,23 @@ async function handler5(sessionId, messaging) {
   `;
 
   try {
+    let s='';
+    
     const fltersession = await filterSessions(sessionId);
     const filterjobs = await filterJobs(fltersession[0].interest);
-    const filtervacancies= await filterVacancy(filterjobs[0].dataValues.id)
+    const filteredDelivery= await filterDelivery(filterjobs[0].dataValues.id);
+    const filterShedegi= filteredDelivery.filter((item)=> !item.dataValues.shedegi.includes("დაკავდა") && !item.dataValues.shedegi.includes("გაუქმდა"));
+
+    for(let i =0; i<2;i++){
+      s=s+ "   " +filterShedegi[i].raioni + " / " + filterShedegi[i].shedegi;
+    }
 
     const message = `თქვენ წარმატებით გაიარეთ რეგისტრაცია თბილისის საოჯახო პერსონალის საკადრო ცენტრ 
     ,,ბაია”-ს გვერდზე პროფილში ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}. 
-    გთხოვთ გადახვიდეთ ამ გვერდზე და იხილოთ თქვენტვის სასურველი ვაკანსიები https://hrbaia.com/ge/applicant/vacancy/${filterjobs[0].dataValues.slug}
+     იხილეთ თქვენტვის სასურველი ვაკანსიები  ${s}
   `;
 
-  console.log(filtervacancies)
+    console.log(s);
 
     const payload = {
       messaging_type: "RESPONSE",

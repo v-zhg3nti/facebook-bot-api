@@ -3,7 +3,9 @@ const { Job } = require("../models/index");
 async function filterJobs(event) {
   try {
     const filteredJobs = await Job.findAll({
-        where: { sataurien: event },
+        where: { 
+          sataurien: event,
+        },
       });
      
     return filteredJobs;

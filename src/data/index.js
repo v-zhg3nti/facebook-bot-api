@@ -8,7 +8,7 @@ const quickReplies = {
     {
       content_type: "text",
       title: "🔴 ოჯახში დამხმარე / Helper in family",
-      payload: "Family_helper",
+      payload: "Domestic helper",
     },
     {
       content_type: "text",
@@ -18,7 +18,7 @@ const quickReplies = {
     {
       content_type: "text",
       title: "🟡 გუვერნანტი / governess",
-      payload: "Governess",
+      payload: "Nanny-guvernant",
     },
     {
       content_type: "text",

@@ -7,11 +7,15 @@ const {
 
 const { createPayload } = require("../utils/index");
 const { handler1Payload } = require("../data/index");
-const { updateSession, getSession,filterSessions } = require("./session-services");
+const {
+  updateSession,
+  getSession,
+  filterSessions,
+} = require("./session-services");
 
-const { getUser, createUsers,updateUseer } = require("./user-services");
-const {filterJobs} =require('./jobs-service');
-
+const { getUser, createUsers, updateUseer } = require("./user-services");
+const {filterVacancy} = require('./delivery-services');
+const { filterJobs } = require("./jobs-service");
 
 async function handler1(userId) {
   const textGE = "რა პოზიციაზე ეძებთ სამსახურს ?";
@@ -74,7 +78,6 @@ async function handler2(sessionId, messaging) {
   }
 }
 
-
 async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
   const message = `თქვენ არ ხართ რეგისტრირებული, გთხოვთ მოგვწეროთ თქვენი სახელი /you aren't registrated yet`;
@@ -84,8 +87,8 @@ async function handler3(sessionId, messaging) {
     console.log("userLength#@#$$ ", user);
     if (user !== null) {
       try {
-        const fltersession =await filterSessions(sessionId);
-        const filterjobs= await filterJobs(fltersession[0].interest);
+        const fltersession = await filterSessions(sessionId);
+        const filterjobs = await filterJobs(fltersession[0].interest);
         const message = `ტქვენ უკვე რეგისტრირებული ხართ იხილეთ ვაკანსიები/you has already been registrated see our vaccancies 
         ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}
         `;
@@ -107,7 +110,6 @@ async function handler3(sessionId, messaging) {
         return response;
       } catch (error) {}
     }
-    
 
     const payload = {
       messaging_type: "RESPONSE",
@@ -124,11 +126,10 @@ async function handler3(sessionId, messaging) {
       `/me/messages?access_token=${access_token}`,
       payload
     );
-    await createUsers({userId: sessionId, phoneNumber: phoneNumber});
+    await createUsers({ userId: sessionId, phoneNumber: phoneNumber });
     console.log("response 33333", response.data);
     return response;
   } catch (error) {}
-
 }
 
 async function handler4(sessionId, messaging) {
@@ -136,7 +137,6 @@ async function handler4(sessionId, messaging) {
   const message = `თქვენი მეილი/your email;`;
 
   try {
-
     const payload = {
       messaging_type: "RESPONSE",
       recipient: {
@@ -147,8 +147,8 @@ async function handler4(sessionId, messaging) {
       },
     };
 
-    console.log("sessionId ",sessionId)
-    await updateUseer(sessionId, {userName: userName})
+    console.log("sessionId ", sessionId);
+    await updateUseer(sessionId, { userName: userName });
     const request = await axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,
@@ -162,22 +162,22 @@ async function handler4(sessionId, messaging) {
 async function handler5(sessionId, messaging) {
   const userEmail = messaging[0].message?.text;
 
-
-
   const message = `თქვენ უკვე რეგისტრირებული ხართ იხილეთ ვაკანსიები/you has already been registrated see our vaccancies 
   
   `;
 
   try {
+    const fltersession = await filterSessions(sessionId);
+    const filterjobs = await filterJobs(fltersession[0].interest);
+    const filtervacancies= await filterVacancy(filterjobs[0].dataValues.id)
 
-    const fltersession =await filterSessions(sessionId);
-    const filterjobs= await filterJobs(fltersession[0].interest);
- 
-  
-    const message = `თქვენ უკვე რეგისტრირებული ხართ იხილეთ ვაკანსიები/you has already been registrated see our vaccancies: 
-    ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}
+    const message = `თქვენ წარმატებით გაიარეთ რეგისტრაცია თბილისის საოჯახო პერსონალის საკადრო ცენტრ 
+    ,,ბაია”-ს გვერდზე პროფილში ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}. 
+    გთხოვთ გადახვიდეთ ამ გვერდზე და იხილოთ თქვენტვის სასურველი ვაკანსიები https://hrbaia.com/ge/applicant/vacancy/${filterjobs[0].dataValues.slug}
   `;
-   
+
+  console.log(filtervacancies)
+
     const payload = {
       messaging_type: "RESPONSE",
       recipient: {
@@ -188,7 +188,7 @@ async function handler5(sessionId, messaging) {
       },
     };
 
-    await updateUseer(sessionId, {email: userEmail})
+    await updateUseer(sessionId, { email: userEmail });
 
     const request = await axiosInstance();
     const response = await request.post(

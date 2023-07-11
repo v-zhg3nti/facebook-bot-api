@@ -1,8 +1,8 @@
-const { User } = require("../models/index");
+const { CollectAllData } = require("../models/index");
 
 async function createUser(userData) {
   try {
-    const userMainData = (await User.create(userData)).toJSON();
+    const userMainData = (await CollectAllData.create(userData)).toJSON();
     console.log("created session: ", userMainData);
     return userMainData;
   } catch (error) {
@@ -13,7 +13,7 @@ async function createUser(userData) {
 
 async function updateUser(phoneNumber, updateData) {
   try {
-    const updateUser = await User.update(updateData, {
+    const updateUser = await CollectAllData.update(updateData, {
       where: { phoneNumber },
     });
     return updateUser;

@@ -69,15 +69,15 @@ async function handler2(sessionId, messaging) {
 }
 
 const userObject = {
-  userName: "",
-  phoneNumber: "",
+  fio: "",
+  telefoni: "",
   email: "",
 };
 
 async function handler3(sessionId, messaging) {
-  const phoneNumber = messaging[0].message?.text;
-  userObject.phoneNumber = phoneNumber;
-  const user = await getUser({ email: phoneNumber });
+  const telefoni = messaging[0].message?.text;
+  userObject.telefoni = telefoni;
+  const user = await getUser({ telefoni: telefoni });
 
   try {
     let message = "";
@@ -112,8 +112,8 @@ async function handler3(sessionId, messaging) {
 //adding username to sql
 
 async function handler4(sessionId, messaging) {
-  const userName = messaging[0].message?.text;
-  userObject.userName = userName;
+  const fio = messaging[0].message?.text;
+  userObject.fio = fio;
   try {
     let message = "მოგვაწოდეთ თქვენი ელ-ფოსტა..";
 

@@ -136,9 +136,9 @@ async function handler4(sessionId, messaging) {
     console.log("error acquired in handler 4: ", error);
     throw error;
   }
-
   // const nextStage = Object.keys(user).length ?
 }
+
 async function handler5(sessionId, messaging) {
   const email = messaging[0].message?.text;
   userObject.email = email;

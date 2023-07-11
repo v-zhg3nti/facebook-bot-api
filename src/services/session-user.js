@@ -1,24 +1,39 @@
-const { CollectAllData } = require("../models/index");
+const { xsoft } = require("../models/index");
 
-async function createUser(userData) {
+async function createUser(data) {
   try {
-    const userMainData = (await CollectAllData.create(userData)).toJSON();
-    console.log("created session: ", userMainData);
-    return userMainData;
+    console.log("####Data", data);
+
+    // Check if user already exists based on unique fields (telefoni in this case)
+    const existingUser = await xsoft.findOne({ where: { telefoni: data.telefoni } });
+
+    if (existingUser) {
+      console.log("User already registered");
+      return { message: "Thank you! You are already registered and we will contact you soon." };
+    }
+
+    // If user does not exist, create a new entry
+    const user = await xsoft.create({
+      email: data.email,
+      telefoni: data.telefoni,
+      fio: data.fio
+    });
+
+    return user;
   } catch (error) {
-    console.log("error acquired in createSession method: ", error);
+    console.log("Error encountered in createUser method:", error);
     throw error;
   }
 }
 
-async function updateUser(phoneNumber, updateData) {
+async function updateUser(telefoni, updateData) {
   try {
-    const updateUser = await CollectAllData.update(updateData, {
-      where: { phoneNumber },
+    const updateUser = await xsoft.update(updateData, {
+      where: { telefoni },
     });
     return updateUser;
   } catch (error) {
-    console.log("error acquired in updateSession method: ", error);
+    console.log("Error encountered in updateUser method:", error);
     throw error;
   }
 }

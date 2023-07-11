@@ -1,15 +1,15 @@
-const { User } = require("../models/index");
-const { CollectAllData } = require("../models/index");
+const { xsoft } = require('../models');
+
 async function getUser(options) {
   try {
     console.log("@@@@@@@Options", options);
-    const user = await CollectAllData.findOne({
+    const user = await xsoft.findOne({
       where: { ...options },
       raw: true,
     });
     return user;
   } catch (error) {
-    console.log("error acquired in getUser method: ", error);
+    console.log("Error encountered in getUser method:", error);
     throw error;
   }
 }

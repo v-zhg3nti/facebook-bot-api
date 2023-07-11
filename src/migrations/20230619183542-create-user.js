@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("CollectAllData", {
+    await queryInterface.createTable("xsoft", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -22,15 +22,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      specialoba: Sequelize.STRING,
-      ganatleba: Sequelize.STRING,
-      erovneba: Sequelize.STRING,
-      gamocdileba: Sequelize.STRING,
-      ucxoena: Sequelize.STRING,
-      asaki: Sequelize.STRING,
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("CollectAllData");
+    await queryInterface.dropTable("xsoft");
   },
 };

@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class CollectAllData extends Model {
+  class xsoft extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,39 +11,33 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  CollectAllData.init(
+  xsoft.init(
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        defaultValue: true,
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       telefoni: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       fio: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
-      specialoba: DataTypes.STRING,
-      ganatleba: DataTypes.STRING,
-      erovneba: DataTypes.STRING,
-      gamocdileba: DataTypes.STRING,
-      ucxoena: DataTypes.STRING,
-      asaki: DataTypes.STRING,
     },
     {
       sequelize,
-      modelName: "CollectAllData",
-      tableName: "collectAllData",
+      modelName: "xsoft",
+      tableName: "xsoft",
       timestamps: false,
     }
   );
-  return CollectAllData;
+  return xsoft;
 };

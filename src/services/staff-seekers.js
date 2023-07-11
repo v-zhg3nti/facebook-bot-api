@@ -10,11 +10,14 @@ const { handler2Payload } = require("../data/index");
 const { updateSession, getSession } = require("./session-services");
 const { getUser } = require("./user-services");
 const { createUser, updateUser } = require("./session-user");
+// const { getJobs } = require("./jobs-service")
 
 async function handler1(userId) {
   const textGE = "რა პოზიციაზე ეძებთ თანამშრომელს ?";
   const textENG = "In which position you looking for staff?";
   const text = `${textGE} / ${textENG} `;
+  // const jobs = await getJobs({jobs:"jobs"})
+  // console.log(jobs, "jooobobss staff seeker");
   const payload = createPayload(userId, text, handler2Payload);
 
   try {
@@ -74,7 +77,7 @@ const userObject = {
 async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
   userObject.phoneNumber = phoneNumber;
-  const user = await getUser({ phoneNumber });
+  const user = await getUser({ email: phoneNumber });
 
   try {
     let message = "";

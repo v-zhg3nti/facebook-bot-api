@@ -74,7 +74,7 @@ const userObject = {
 async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
   userObject.phoneNumber = phoneNumber;
-  const user = await getUser({ phoneNumber });
+  const user = await getUser({ email: phoneNumber });
 
   try {
     let message = "";

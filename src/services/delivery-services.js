@@ -8,8 +8,10 @@ async function filterDelivery(event) {
             pozicia: event,
         },
       });
+
+      const filterShedegi=filtereDeliver.filter((item) => !item.shedegi.includes("დაკავდა") && !item.shedegi.includes("გაუქმდა"));
      
-    return filtereDeliver;
+    return filterShedegi;
   } catch (error) {
     console.log("error acquired in createSession method: ", error);
     throw error;

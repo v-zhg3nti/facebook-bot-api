@@ -67,11 +67,16 @@ async function handler2(sessionId, messaging) {
     throw error;
   }
 }
-
 const userObject = {
   fio: "",
   telefoni: "",
   email: "",
+  specialoba: "",
+  ganatleba: "",
+  erovneba: "",
+  gamocdileba: "",
+  ucxoena: "",
+  asaki: ""
 };
 
 async function handler3(sessionId, messaging) {

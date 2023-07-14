@@ -1,16 +1,21 @@
-const { jobs } = require('../models/index')
+const { Job } = require("../models/index");
 
-async function getJobs(options) {
+async function filterJobs(event) {
   try {
-    console.log("@@@@@@@Options", options);
-    const job = await jobs.findOne({ where: { ...options }, raw: true });
-    return job;
+    const filteredJobs = await Job.findAll({
+        where: { 
+          sataurien: event,
+        },
+      });
+     
+    return filteredJobs;
   } catch (error) {
-    console.log("error acquired in getJobs method: ", error);
+    console.log("error acquired in createSession method: ", error);
     throw error;
   }
 }
 
+
 module.exports = {
-  getJobs,
+    filterJobs
 };

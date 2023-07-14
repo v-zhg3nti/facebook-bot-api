@@ -557,6 +557,33 @@ async function handler7(sessionId, messaging) {
 }
 
 async function handler8(sessionId, messaging) {
+  const sachiroeba = messaging[0].message?.text;
+  userObject.sachiroeba = sachiroeba;
+
+  try {
+    const message = "რა ვადებში ეძებთ პერსონალს? (რიცხვი, დღე)";
+    const payload = {
+      messaging_type: "RESPONSE",
+      recipient: {
+        id: sessionId,
+      },
+      message: {
+        text: message,
+      },
+    };
+    const request = axiosInstance();
+    const response = await request.post(
+      `/me/messages?access_token=${access_token}`,
+      payload
+    );
+    return response;
+  } catch (error) {
+    console.log("error acquired in handler 3: ", error);
+    throw error;
+  }
+}
+
+async function handler9(sessionId, messaging) {
   const damatebiti = messaging[0].message?.text;
   userObject.damatebiti = damatebiti;
 
@@ -583,12 +610,11 @@ async function handler8(sessionId, messaging) {
   }
 }
 
-async function handler9(sessionId, messaging) {
+async function handler10(sessionId, messaging) {
   const asaki = messaging[0].message?.text;
   userObject.asaki = asaki;  // setting 'erovneba' to the user's response
   try {
     let message = "მოგვაწოდეთ თქვენი ელ-ფოსტა...";
-
     const payload = {
       messaging_type: "RESPONSE",
       recipient: {
@@ -610,7 +636,7 @@ async function handler9(sessionId, messaging) {
   }
 }
 
-async function handler10(sessionId, messaging) {
+async function handler11(sessionId, messaging) {
   const email = messaging[0].message?.text;
   userObject.email = email;
   try {
@@ -649,4 +675,5 @@ module.exports = {
   handler8,
   handler9,
   handler10,
+  handler11,
 };

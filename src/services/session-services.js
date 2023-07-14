@@ -33,6 +33,18 @@ async function deleteSession(sessionId) {
   }
 }
 
+async function filterSessions(sessionId) {
+  try {
+    const filterSession = await UserSession.findAll({
+        where: { sessionId: sessionId },
+      });
+    return filterSession;
+  } catch (error) {
+    console.log("error acquired in createSession method: ", error);
+    throw error;
+  }
+}
+
 async function getSession(sessionId) {
   try {
     const session = await UserSession.findAll(
@@ -54,4 +66,5 @@ module.exports = {
   updateSession,
   deleteSession,
   getSession,
+  filterSessions
 };

@@ -1,9 +1,9 @@
-const { xsoft2 } = require('../models');
+const { damkvetebiii } = require('../models');
 
 async function getUser(options) {
   try {
     console.log("@@@@@@@Options", options);
-    const user = await xsoft2.findOne({
+    const user = await damkvetebiii.findOne({
       where: { ...options },
       raw: true,
     });

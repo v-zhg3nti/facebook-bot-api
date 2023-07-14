@@ -2,53 +2,36 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("xsoft2", {
+    await queryInterface.createTable("Users", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        defaultValue: true,
         type: Sequelize.INTEGER,
+      },
+      userName: {
+        type: Sequelize.STRING,
+      },
+      userId: {
+        type: Sequelize.STRING,
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: true,
       },
-      telefoni: {
+      phoneNumber: {
         type: Sequelize.STRING,
-        allowNull: true,
       },
-      fio: {
-        type: Sequelize.STRING,
-        allowNull: true,
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
       },
-      specialoba: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      ganatleba: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      erovneba: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      gamocdileba: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      ucxoena: {
-        type: Sequelize.TEXT,
-        allowNull: true,
-      },
-      asaki: {
-        type: Sequelize.TEXT,
-        allowNull: true,
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
       },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("xsoft2");
+    await queryInterface.dropTable("Users");
   },
 };

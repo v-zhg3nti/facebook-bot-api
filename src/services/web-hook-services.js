@@ -7,9 +7,13 @@ const {
   PAGE,
   SUBSCRIBE,
   JOB_SEEKERS,
+  LOOKING_FOR_STAFF,
+  STAFF_SEEKER,
+  NEW_USER,
 } = require("../constants/index");
 
 const jobSeekers = require("./job-seekers");
+const staffSeeker = require("./staff-seekers");
 const {
   createSession,
   updateSession,
@@ -56,6 +60,20 @@ async function distributeEvents(object, messaging, userId) {
         }
         break;
       }
+      case LOOKING_FOR_STAFF: {
+        const sessionObject = {
+          sessionId: userId,
+          stage: 1,
+          serviceName: STAFF_SEEKER,
+        };
+        try {
+          await createSession({ userId, ...sessionObject });
+          res = await staffSeeker[`handler${sessionObject.stage}`](userId);
+        } catch (error) {
+          console.error("Error in distributeEvents:", error);
+        }
+        break;
+      }
       default:
         break;
     }
@@ -66,10 +84,12 @@ async function distributeEvents(object, messaging, userId) {
 
 function serviceDistribution(serviceName) {
   let selectedService = undefined;
-
   switch (serviceName) {
     case JOB_SEEKERS:
       selectedService = jobSeekers;
+      break;
+    case STAFF_SEEKER:
+      selectedService = staffSeeker;
       break;
     default:
       selectedService = null;

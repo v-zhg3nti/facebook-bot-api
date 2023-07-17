@@ -1,5 +1,4 @@
 require("dotenv").config("../../.env");
-
 const axiosInstance = require("../http/index");
 const {
   facebook: { access_token },
@@ -10,18 +9,17 @@ const { handler1Payload } = require("../data/index");
 const {
   updateSession,
   getSession,
-  filterSessions,
+  filterSessions2,
 } = require("./session-services");
+const { getUser2, createUsers2, updateUser2} = require('./user-services2');
 
-const { getUser, createUsers, updateUseer } = require("./user-services");
 const { filterJobs } = require("./jobs-service");
 
 async function handler1(userId) {
   const textGE = "რა პოზიციაზე ეძებთ სამსახურს ?";
-  const textENG = "In which position you looking for job?";
-  const textRU = "какой должности вы ищете работу? ?";
+  const textENG = "In which position you looking for a job?";
+  const textRU = "На какой должности вы ищете работу?";
   const text = `${textGE} / ${textENG} / ${textRU}`;
-
   const payload = createPayload(userId, text, handler1Payload);
 
   try {
@@ -33,7 +31,7 @@ async function handler1(userId) {
     return response.data;
   } catch (error) {
     console.error(
-      "Error sending request to Facebook Graph API:",
+      "Error sending a request to the Facebook Graph API:",
       error.message
     );
     if (error.response) {
@@ -49,8 +47,8 @@ async function handler2(sessionId, messaging) {
     const interest = messaging[0]?.message?.quick_reply?.payload;
 
     console.log("@@@@@@interest", interest);
-    const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ტელეფონი  რომლითაც დარეგისტრირდით hrbaia.com
-     / Before we go to the next step, we want to see if you are registered in our system, please write us the phone number which you registered with hrbaia.com`;
+    const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ტელეფონი, რომლითაც დარეგისტრირდით hrbaia.com.
+     / Before we go to the next step, we want to see if you are registered in our system. Please write us the phone number which you registered with hrbaia.com`;
     const payload = {
       messaging_type: "RESPONSE",
       recipient: {
@@ -72,25 +70,23 @@ async function handler2(sessionId, messaging) {
 
     return response;
   } catch (error) {
-    console.log("error acquired in handler 2: ", error);
+    console.log("Error acquired in handler2:", error);
     throw error;
   }
 }
 
 async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
-  const message = `თქვენ არ ხართ რეგისტრირებული, გთხოვთ მოგვწეროთ თქვენი სახელი /you aren't registrated yet`;
-
+  const message = `თქვენ არ ხართ რეგისტრირებული, გთხოვთ მოგვწეროთ თქვენი სახელი / You aren't registered yet`;
   try {
-    const user = await getUser({ phoneNumber });
+    const user = await getUser2({ PhoneNumber: phoneNumber });
     console.log("userLength#@#$$ ", user);
     if (user !== null) {
       try {
-        const fltersession = await filterSessions(sessionId);
-        const filterjobs = await filterJobs(fltersession[0].interest);
-        const message = `ტქვენ უკვე რეგისტრირებული ხართ იხილეთ ვაკანსიები/you has already been registrated see our vaccancies 
-        ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}
-        `;
+        const filterSession2 = await filterSessions2(sessionId);
+        const filterJobsResult = await filterJobs(filterSession2[0].interest);
+        const message = `ტქვენ უკვე რეგისტრირებული ხართ. იხილეთ ვაკანსიები / You have already been registered. See our vacancies:
+        ${filterJobsResult[0].dataValues.sataurige} / ${filterJobsResult[0].dataValues.sataurien}`;
         const payload = {
           messaging_type: "RESPONSE",
           recipient: {
@@ -107,7 +103,9 @@ async function handler3(sessionId, messaging) {
         );
         console.log("response 33333", response.data);
         return response;
-      } catch (error) {}
+      } catch (error) {
+        console.log("Error in handler3 - inner try:", error);
+      }
     }
 
     const payload = {
@@ -125,15 +123,17 @@ async function handler3(sessionId, messaging) {
       `/me/messages?access_token=${access_token}`,
       payload
     );
-    await createUsers({ userId: sessionId, phoneNumber: phoneNumber });
+    await createUsers2({ userId: sessionId, phoneNumber: phoneNumber });
     console.log("response 33333", response.data);
     return response;
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error in handler3 - outer try:", error);
+  }
 }
 
 async function handler4(sessionId, messaging) {
   const userName = messaging[0].message?.text;
-  const message = `თქვენი მეილი/your email;`;
+  const message = `თქვენი მეილი / Your email:`;
 
   try {
     const payload = {
@@ -147,7 +147,7 @@ async function handler4(sessionId, messaging) {
     };
 
     console.log("sessionId ", sessionId);
-    await updateUseer(sessionId, { userName: userName });
+    await updateUser2(sessionId, { userName: userName });
     const request = await axiosInstance();
     const response = await request.post(
       `/me/messages?access_token=${access_token}`,
@@ -155,28 +155,25 @@ async function handler4(sessionId, messaging) {
     );
     console.log("response 33333", response.data);
     return response;
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error in handler4:", error);
+  }
 }
 
 async function handler5(sessionId, messaging) {
   const userEmail = messaging[0].message?.text;
 
-  const message = `თქვენ უკვე რეგისტრირებული ხართ იხილეთ ვაკანსიები/you has already been registrated see our vaccancies 
+  const message = `თქვენ უკვე რეგისტრირებული ხართ. იხილეთ ვაკანსიები / You have already been registered. See our vacancies:
   
   `;
 
   try {
-    
-    const fltersession = await filterSessions(sessionId);
-    const filterjobs = await filterJobs(fltersession[0].interest);
-   
-    
-
-    const message = `თქვენ წარმატებით გაიარეთ რეგისტრაცია თბილისის საოჯახო პერსონალის საკადრო ცენტრ 
-    ,,ბაია”-ს გვერდზე პროფილში ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}. 
-     გადადით ლინკზე და იხილეთ თქვენთვის სასურველი ვაკანსიები https://hrbaia.com/ge/applicant/vacancy/${filterjobs[0].dataValues.slug}
-  `;
-
+    const filterSession = await filterSessions(sessionId);
+    const filterJobsResult = await filterJobs(filterSession[0].interest);
+    const message = `თქვენ წარმატებით გაიარეთ რეგისტრაცია თბილისის საოჯახო პერსონალის საკადრო ცენტრი ,,ბაია”-ს გვერდზე პროფილში
+    ${filterJobsResult[0].dataValues.sataurige} / ${filterJobsResult[0].dataValues.sataurien}. 
+    გადადით ლინკზე და იხილეთ თქვენთვის სასურველი ვაკანსიები: 
+    https://hrbaia.com/ge/applicant/vacancy/${filterJobsResult[0].dataValues.slug}`;
 
     const payload = {
       messaging_type: "RESPONSE",
@@ -197,11 +194,13 @@ async function handler5(sessionId, messaging) {
     );
 
     return response;
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error in handler5:", error);
+  }
 }
 
-async function handlePositive() {}
-async function handleNegative() {}
+async function handlePositive() { }
+async function handleNegative() { }
 
 module.exports = {
   handler1,

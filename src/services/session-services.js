@@ -36,8 +36,8 @@ async function deleteSession(sessionId) {
 async function filterSessions(sessionId) {
   try {
     const filterSession = await UserSession.findAll({
-        where: { sessionId: sessionId },
-      });
+      where: { sessionId: sessionId },
+    });
     return filterSession;
   } catch (error) {
     console.log("error acquired in createSession method: ", error);

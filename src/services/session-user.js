@@ -1,23 +1,16 @@
-const { xsoft2 } = require("../models/index");
+const { damkvetebiii } = require("../models/index");
 
 async function createUser(data) {
   try {
-    console.log("####Data", data);
-
-    // Check if user already exists based on unique fields (telefoni in this case)
-    const existingUser = await xsoft2.findOne({ where: { telefoni: data.telefoni } });
+    const existingUser = await damkvetebiii.findOne({ where: { teleponi: data.teleponi } });
 
     if (existingUser) {
       console.log("User already registered");
-      return { message: "Thank you! You are already registered and we will contact you soon." };
+      return { message: "Thank you! You are already registered, and we will contact you soon." };
     }
 
-    // If user does not exist, create a new entry
-    const user = await xsoft2.create({
-      email: data.email,
-      telefoni: data.telefoni,
-      fio: data.fio
-    });
+    const user = await damkvetebiii.create(data);
+    console.log("User registered:", user);
 
     return user;
   } catch (error) {
@@ -26,12 +19,12 @@ async function createUser(data) {
   }
 }
 
-async function updateUser(telefoni, updateData) {
+async function updateUser(teleponi, updateData) {
   try {
-    const updateUser = await xsoft2.update(updateData, {
-      where: { telefoni },
-    });
-    return updateUser;
+    const updatedUser = await damkvetebiii.update(updateData, { where: { teleponi } });
+    console.log("User updated:", updatedUser);
+
+    return updatedUser;
   } catch (error) {
     console.log("Error encountered in updateUser method:", error);
     throw error;

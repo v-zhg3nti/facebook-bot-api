@@ -13,7 +13,7 @@ const quickReplies = {
     {
       content_type: "text",
       title: "🟠 ავადმყოფის მომვლელი / Caregiver of the sick",
-      payload: "Caregiver",
+      payload: "Patient care",
     },
     {
       content_type: "text",
@@ -23,17 +23,17 @@ const quickReplies = {
     {
       content_type: "text",
       title: "🟢 დამლაგებელი / cleaner",
-      payload: "Cleaner",
+      payload: "Maid",
     },
     {
       content_type: "text",
       title: "🔵 საბავშვო ბაღის აღმზრდელი / Kindergarten teacher",
-      payload: "Kindergarten",
+      payload: "kindergarten teacher",
     },
     {
       content_type: "text",
       title: "🟣 ოჯახური წყვილები / married couples",
-      payload: "Couples",
+      payload: "Married couple",
     },
     {
       content_type: "text",
@@ -43,7 +43,7 @@ const quickReplies = {
     {
       content_type: "text",
       title: "⚫ დასაქმება საზღვარგარეთ / Employment abroad",
-      payload: "Abroad",
+      payload: "Work abroad",
     },
     {
       content_type: "text",

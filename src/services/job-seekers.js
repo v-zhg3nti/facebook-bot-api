@@ -174,7 +174,7 @@ async function handler3(sessionId, messaging) {
 async function handler4(sessionId, messaging) {
   const userName = messaging[0].message?.text;
   const message = `თქვენი მეილი/your email;`;
-  const answer = messaging[0].postback.payload;
+  const answer = messaging[0]?.postback?.payload;
 
   try {
     if(answer === 'yes' && answer!==undefined){ 

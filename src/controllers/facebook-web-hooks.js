@@ -26,7 +26,7 @@ router.post("/webhook", async (req, res) => {
   const { object, entry } = req.body;
   const { messaging } = entry[0];
   const userId = messaging[0].sender.id;
-
+  console.log(messaging[0].sender);
   await webHookServices.handleWebHookFlow(object, messaging, userId);
 
   res.sendStatus(200);

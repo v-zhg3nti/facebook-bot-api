@@ -1,9 +1,9 @@
-const { damkvetebiii } = require('../models');
+const { User } = require("../models/index");
 
-async function createUsers(options){
+async function createUsers2(options){
   try {
     console.log("@@@@@@@Options", options);
-    const user = await damkvetebiii.create(options);
+    const user = await User.create(options);
     return user;
   } catch (error) {
     console.log("error acquired in getUser method: ", error);
@@ -11,21 +11,18 @@ async function createUsers(options){
   }
 }
 
-async function getUser(options) {
+async function getUser2(options) {
   try {
     console.log("@@@@@@@Options", options);
-    const user = await damkvetebiii.findOne({
-      where: { ...options },
-      raw: true,
-    });
+    const user = await User.findOne({ where: { ...options }, raw: true });
     return user;
   } catch (error) {
-    console.log("Error encountered in getUser method:", error);
+    console.log("error acquired in getUser method: ", error);
     throw error;
   }
 }
 
-async function updateUseer(userId, updateData) {
+async function updateUseer2(userId, updateData) {
   try {
     const updatedSession = await User.update(updateData, {
       where: {userId: userId },
@@ -38,10 +35,8 @@ async function updateUseer(userId, updateData) {
 }
 
 
-
 module.exports = {
-  getUser,
-  createUsers,
-  updateUseer
+  getUser2,
+  createUsers2,
+  updateUseer2
 };
-

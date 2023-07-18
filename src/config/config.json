@@ -3,7 +3,7 @@
     "username": "baia_admin",
     "password": null,
     "database": "baia_chat",
-    "host": "localhost",
+    "host": "127.0.0.1",
     "dialect": "mysql"
   },
   "test": {

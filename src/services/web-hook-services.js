@@ -7,9 +7,13 @@ const {
   PAGE,
   SUBSCRIBE,
   JOB_SEEKERS,
+  LOOKING_FOR_STAFF,
+  STAFF_SEEKER,
+  NEW_USER,
 } = require("../constants/index");
 
 const jobSeekers = require("./job-seekers");
+const staffSeeker = require("./staff-seekers");
 const {
   createSession,
   updateSession,
@@ -23,7 +27,7 @@ async function authorizeWebHook(verifyParameters) {
     "hub.challenge": challenge,
   } = verifyParameters;
 
-  if (!token && !mode && !challenge) {
+  if (!token || !mode || !challenge) {
     throw new Error(400);
   }
 
@@ -35,7 +39,7 @@ async function authorizeWebHook(verifyParameters) {
 }
 
 async function distributeEvents(object, messaging, userId) {
-  let res = undefined;
+  let res;
 
   if (object === PAGE) {
     const eventText = messaging[0]?.message?.text;
@@ -50,7 +54,21 @@ async function distributeEvents(object, messaging, userId) {
         };
         try {
           await createSession({ userId, ...sessionObject });
-          res = await jobSeekers[`handler${sessionObject.stage}`](userId);
+          res = await jobSeekers[`handler${sessionObject.stage}`](userId, messaging);
+        } catch (error) {
+          console.error("Error in distributeEvents:", error);
+        }
+        break;
+      }
+      case LOOKING_FOR_STAFF: {
+        const sessionObject = {
+          sessionId: userId,
+          stage: 1,
+          serviceName: STAFF_SEEKER,
+        };
+        try {
+          await createSession({ userId, ...sessionObject });
+          res = await staffSeeker[`handler${sessionObject.stage}`](userId, messaging);
         } catch (error) {
           console.error("Error in distributeEvents:", error);
         }
@@ -65,14 +83,16 @@ async function distributeEvents(object, messaging, userId) {
 }
 
 function serviceDistribution(serviceName) {
-  let selectedService = undefined;
+  let selectedService = null;
 
   switch (serviceName) {
     case JOB_SEEKERS:
       selectedService = jobSeekers;
       break;
+    case STAFF_SEEKER:
+      selectedService = staffSeeker;
+      break;
     default:
-      selectedService = null;
       break;
   }
 
@@ -84,16 +104,19 @@ async function handleWebHookFlow(object, messaging, sessionId) {
     const userSession = await getSession(sessionId);
 
     if (userSession.length) {
-      let { _, stage, serviceName } = userSession[0];
+      let { stage, serviceName } = userSession[0];
 
       const service = serviceDistribution(serviceName);
       try {
-        stage = stage + 1;
-        await updateSession(sessionId, { sessionId, stage, serviceName }).then(
-          (res) => console.log("updated session", res)
-        );
-        const res = await service[`handler${stage}`](sessionId, messaging);
-        return res;
+        stage++;
+        await updateSession(sessionId, { stage, serviceName });
+        if (service && typeof service[`handler${stage}`] === "function") {
+          const res = await service[`handler${stage}`](sessionId, messaging);
+          return res;
+        } else {
+          console.error(`Error in handleWebHookFlow: Invalid service or handler function for stage ${stage}`);
+          throw new Error(`Invalid service or handler function for stage ${stage}`);
+        }
       } catch (error) {
         console.error("Error in handleWebHookFlow:", error);
         throw error;

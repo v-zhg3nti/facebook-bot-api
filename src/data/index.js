@@ -51,6 +51,23 @@ const quickReplies = {
       payload: "Cook",
     },
   ],
+  handler2Payload: [
+    {
+      content_type: "text",
+      title: "🔘 მიმტანი / servant",
+      payload: "servant",
+    },
+    {
+      content_type: "text",
+      title: "🔴 დაცვის თანამშრომელი / Security Guard",
+      payload: "securityGuard",
+    },
+    {
+      content_type: "text",
+      title: "🟠 ბუღალტერი / Accountant",
+      payload: "accountant",
+    },
+  ],
 };
 
 module.exports = { ...quickReplies };

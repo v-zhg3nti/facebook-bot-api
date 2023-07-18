@@ -2,36 +2,31 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("UserSessions", {
+    await queryInterface.createTable("anketebi", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      sessionId: {
+      specialoba: {
         type: Sequelize.STRING,
       },
-      stage: {
+      telefoni: {
         type: Sequelize.INTEGER,
       },
-      serviceName: {
+      email: {
         type: Sequelize.STRING,
       },
-      interest: {
+      fio: {
         type: Sequelize.STRING,
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
+      dabdge: {
+        type: Sequelize.STRING,
       },
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("UserSessions");
+    await queryInterface.dropTable("anketebi");
   },
 };

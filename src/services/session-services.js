@@ -11,6 +11,21 @@ async function createSession(sessionData) {
   }
 }
 
+async function deleteSession(sessionId) {
+  try {
+    const deletedSession = await UserSession.destroy({ where: { sessionId } });
+    if (deletedSession) {
+      console.log("deleted session with sessionId: ", sessionId);
+      return deletedSession;
+    } else {
+      throw new Error("Session not found");
+    }
+  } catch (error) {
+    console.log("error occurred in deleteSession method: ", error);
+    throw error;
+  }
+}
+
 async function updateSession(sessionId, updateData) {
   try {
     const updatedSession = await UserSession.update(updateData, {
@@ -19,16 +34,6 @@ async function updateSession(sessionId, updateData) {
     return updatedSession;
   } catch (error) {
     console.log("error acquired in updateSession method: ", error);
-    throw error;
-  }
-}
-
-async function deleteSession(sessionId) {
-  try {
-    await UserSession.destroy({ where: { sessionId } });
-    return "OK";
-  } catch (error) {
-    console.log("error acquired in delete session method: ", error);
     throw error;
   }
 }

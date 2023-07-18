@@ -1,4 +1,5 @@
 require("dotenv").config("../../.env");
+
 const axiosInstance = require("../http/index");
 const {
   facebook: { access_token },
@@ -9,17 +10,20 @@ const { handler1Payload } = require("../data/index");
 const {
   updateSession,
   getSession,
-  filterSessions2,
+  filterSessions,
+  deleteSession,
 } = require("./session-services");
-const { getUser2, createUsers2, updateUser2} = require('./user-services2');
 
+const { getUser2, createUsers2, updateUseer2 } = require("./user-services");
 const { filterJobs } = require("./jobs-service");
-
+const { filterDelivery } = require("./delivery-services");
+const attachmentUrl = 'https://macra.mw/storage/2021/05/Job-vacancy.jpg';
 async function handler1(userId) {
   const textGE = "რა პოზიციაზე ეძებთ სამსახურს ?";
-  const textENG = "In which position you looking for a job?";
-  const textRU = "На какой должности вы ищете работу?";
+  const textENG = "In which position you looking for job?";
+  const textRU = "какой должности вы ищете работу? ?";
   const text = `${textGE} / ${textENG} / ${textRU}`;
+
   const payload = createPayload(userId, text, handler1Payload);
 
   try {
@@ -31,7 +35,7 @@ async function handler1(userId) {
     return response.data;
   } catch (error) {
     console.error(
-      "Error sending a request to the Facebook Graph API:",
+      "Error sending request to Facebook Graph API:",
       error.message
     );
     if (error.response) {
@@ -46,9 +50,9 @@ async function handler2(sessionId, messaging) {
   try {
     const interest = messaging[0]?.message?.quick_reply?.payload;
 
-    console.log("@@@@@@interest", interest);
-    const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ტელეფონი, რომლითაც დარეგისტრირდით hrbaia.com.
-     / Before we go to the next step, we want to see if you are registered in our system. Please write us the phone number which you registered with hrbaia.com`;
+
+    const message = `სანამ შემდეგ ეტაპზე გადავალთ გვინდა ვნახოთ ხართ თუ არა ჩვენს სისტემაში დარეგისტრირებული ამისათვის გთხოვთ მოგვწეროთ ტელეფონი  რომლითაც დარეგისტრირდით hrbaia.com
+     / Before we go to the next step, we want to see if you are registered in our system, please write us the phone number which you registered with hrbaia.com`;
     const payload = {
       messaging_type: "RESPONSE",
       recipient: {
@@ -58,6 +62,7 @@ async function handler2(sessionId, messaging) {
         text: message,
       },
     };
+
     await updateSession(sessionId, { interest });
     const request = await axiosInstance();
     const response = await request.post(
@@ -65,28 +70,29 @@ async function handler2(sessionId, messaging) {
       payload
     );
 
-    console.log("response data222", response.data);
-    console.log("payload2222", payload);
-
     return response;
   } catch (error) {
-    console.log("Error acquired in handler2:", error);
+    console.log("error acquired in handler 2: ", error);
     throw error;
   }
 }
 
 async function handler3(sessionId, messaging) {
   const phoneNumber = messaging[0].message?.text;
-  const message = `თქვენ არ ხართ რეგისტრირებული, გთხოვთ მოგვწეროთ თქვენი სახელი / You aren't registered yet`;
+  const message = `თქვენ არ ხართ რეგისტრირებული, გთხოვთ მოგვწეროთ თქვენი სახელი /you aren't registrated yet`;
+
   try {
-    const user = await getUser2({ PhoneNumber: phoneNumber });
-    console.log("userLength#@#$$ ", user);
+    const user = await getUser2({ phoneNumber });
     if (user !== null) {
       try {
-        const filterSession2 = await filterSessions2(sessionId);
-        const filterJobsResult = await filterJobs(filterSession2[0].interest);
-        const message = `ტქვენ უკვე რეგისტრირებული ხართ. იხილეთ ვაკანსიები / You have already been registered. See our vacancies:
-        ${filterJobsResult[0].dataValues.sataurige} / ${filterJobsResult[0].dataValues.sataurien}`;
+        const fltersession = await filterSessions(sessionId);
+        const filterjobs = await filterJobs(fltersession[0].interest);
+
+        const message = `თქვენ უკვე რეგისტრირებული ხართ თბილისის საოჯახო პერსონალის საკადრო ცენტრ 
+        ,,ბაია”-ს გვერდზე პროფილში ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}.
+      `;
+
+
         const payload = {
           messaging_type: "RESPONSE",
           recipient: {
@@ -96,16 +102,51 @@ async function handler3(sessionId, messaging) {
             text: message,
           },
         };
+
+        const payloadxx = {
+          messaging_type: "RESPONSE",
+          recipient: {
+            id: sessionId,
+          },
+          message: {
+            attachment: {
+              type: "template",
+              payload: {
+                template_type: "generic",
+                elements: [{
+                  title: "გსურთ იხილოთ აქტიური ვაკანსიები?",
+                  subtitle: "Tap a button to answer.",
+                  image_url: attachmentUrl,
+                  buttons: [
+                    {
+                      type: "postback",
+                      title: "კი",
+                      payload: "yes",
+                    },
+                    {
+                      type: "postback",
+                      title: "არა",
+                      payload: "no",
+                    }
+                  ]
+                }]
+              }
+            }
+          }
+        }
+
         const request = await axiosInstance();
-        const response = await request.post(
+        await request.post(
           `/me/messages?access_token=${access_token}`,
           payload
         );
-        console.log("response 33333", response.data);
+        const response = await request.post(
+          `/me/messages?access_token=${access_token}`,
+          payloadxx
+        );
+
         return response;
-      } catch (error) {
-        console.log("Error in handler3 - inner try:", error);
-      }
+      } catch (error) { }
     }
 
     const payload = {
@@ -124,56 +165,119 @@ async function handler3(sessionId, messaging) {
       payload
     );
     await createUsers2({ userId: sessionId, phoneNumber: phoneNumber });
-    console.log("response 33333", response.data);
+
     return response;
-  } catch (error) {
-    console.log("Error in handler3 - outer try:", error);
-  }
+  } catch (error) { }
 }
 
 async function handler4(sessionId, messaging) {
   const userName = messaging[0].message?.text;
-  const message = `თქვენი მეილი / Your email:`;
+  const message = `თქვენი მეილი/your email;`;
+  const answer = messaging[0].postback.payload;
 
   try {
-    const payload = {
-      messaging_type: "RESPONSE",
-      recipient: {
-        id: sessionId,
-      },
-      message: {
-        text: message,
-      },
-    };
+    if (answer === 'yes' && answer !== undefined) {
+      const fltersession = await filterSessions(sessionId);
+      const filterjobs = await filterJobs(fltersession[0].interest);
 
-    console.log("sessionId ", sessionId);
-    await updateUser2(sessionId, { userName: userName });
-    const request = await axiosInstance();
-    const response = await request.post(
-      `/me/messages?access_token=${access_token}`,
-      payload
-    );
-    console.log("response 33333", response.data);
-    return response;
-  } catch (error) {
-    console.log("Error in handler4:", error);
-  }
+      const payloadxxxxx = {
+        messaging_type: "RESPONSE",
+        recipient: {
+          id: sessionId,
+        },
+        message: {
+          attachment: {
+            type: "template",
+            payload: {
+              template_type: "generic",
+              elements: [
+                {
+                  title: "vacancies",
+                  image_url:
+                    "https://images-ext-2.discordapp.net/external/K060jWOOgb5odhYIW0AvwF87mGj09a6mUpqczSmgf_E/https/i.ytimg.com/vi/Cz1FPlsPNBo/maxresdefault.jpg?width=993&height=559",
+                  subtitle: "We have the right hat for everyone.",
+                  default_action: {
+                    type: "web_url",
+                    url: `https://hrbaia.com/ge/applicant/vacancy/${filterjobs[0].dataValues.slug}`,
+                    webview_height_ratio: "tall",
+                  },
+                  buttons: [
+                    {
+                      type: "web_url",
+                      url: `https://hrbaia.com/ge/applicant/vacancy/${filterjobs[0].dataValues.slug}`,
+                      title: "View Website",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+
+
+
+      const request = await axiosInstance();
+      await deleteSession(sessionId);
+      const response = await request.post(
+        `/me/messages?access_token=${access_token}`,
+        payloadxxxxx
+      );
+
+      return response;
+
+    } else if (answer === 'no' && answer !== undefined) {
+      const message = `კარგით გისურვებთ წარმატებებს `;
+
+      const payload = {
+        messaging_type: "RESPONSE",
+        recipient: {
+          id: sessionId,
+        },
+        message: {
+          text: message,
+        },
+      };
+
+      const request = await axiosInstance();
+
+      const response = await request.post(
+        `/me/messages?access_token=${access_token}`,
+        payload
+      );
+
+      return response;
+    } else {
+
+      const payload = {
+        messaging_type: "RESPONSE",
+        recipient: {
+          id: sessionId,
+        },
+        message: {
+          text: message,
+        },
+      };
+
+
+      await updateUseer2(sessionId, { userName: userName });
+      const request = await axiosInstance();
+      const response = await request.post(
+        `/me/messages?access_token=${access_token}`,
+        payload
+      );
+
+      return response;
+
+    }
+
+  } catch (error) { }
 }
 
 async function handler5(sessionId, messaging) {
   const userEmail = messaging[0].message?.text;
-
-  const message = `თქვენ უკვე რეგისტრირებული ხართ. იხილეთ ვაკანსიები / You have already been registered. See our vacancies:
-  
-  `;
-
   try {
-    const filterSession = await filterSessions(sessionId);
-    const filterJobsResult = await filterJobs(filterSession[0].interest);
-    const message = `თქვენ წარმატებით გაიარეთ რეგისტრაცია თბილისის საოჯახო პერსონალის საკადრო ცენტრი ,,ბაია”-ს გვერდზე პროფილში
-    ${filterJobsResult[0].dataValues.sataurige} / ${filterJobsResult[0].dataValues.sataurien}. 
-    გადადით ლინკზე და იხილეთ თქვენთვის სასურველი ვაკანსიები: 
-    https://hrbaia.com/ge/applicant/vacancy/${filterJobsResult[0].dataValues.slug}`;
+
 
     const payload = {
       messaging_type: "RESPONSE",
@@ -181,11 +285,33 @@ async function handler5(sessionId, messaging) {
         id: sessionId,
       },
       message: {
-        text: message,
-      },
-    };
+        attachment: {
+          type: "template",
+          payload: {
+            template_type: "generic",
+            elements: [{
+              title: "გსურთ იხილოთ აქტიური ვაკანსიები?",
+              subtitle: "Tap a button to answer.",
+              image_url: attachmentUrl,
+              buttons: [
+                {
+                  type: "postback",
+                  title: "კი",
+                  payload: "yes",
+                },
+                {
+                  type: "postback",
+                  title: "არა",
+                  payload: "no",
+                }
+              ]
+            }]
+          }
+        }
+      }
+    }
 
-    await updateUseer(sessionId, { email: userEmail });
+    await updateUseer2(sessionId, { email: userEmail });
 
     const request = await axiosInstance();
     const response = await request.post(
@@ -194,9 +320,111 @@ async function handler5(sessionId, messaging) {
     );
 
     return response;
-  } catch (error) {
-    console.log("Error in handler5:", error);
-  }
+  } catch (error) { }
+}
+
+async function handler6(sessionId, messaging) {
+  const answer = messaging[0].postback.payload;
+
+  try {
+
+    if (answer === 'yes') {
+
+
+      const fltersession = await filterSessions(sessionId);
+      const filterjobs = await filterJobs(fltersession[0].interest);
+
+      const message = `თქვენ წარმატებით გაიარეთ რეგისტრაცია თბილისის საოჯახო პერსონალის საკადრო ცენტრ 
+        ,,ბაია”-ს გვერდზე პროფილში ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}.
+      `;
+
+      const payload = {
+        messaging_type: "RESPONSE",
+        recipient: {
+          id: sessionId,
+        },
+        message: {
+          text: message,
+        },
+      };
+
+      const payloadxxxxx = {
+        messaging_type: "RESPONSE",
+        recipient: {
+          id: sessionId,
+        },
+        message: {
+          attachment: {
+            type: "template",
+            payload: {
+              template_type: "generic",
+              elements: [
+                {
+                  title: "vacancies",
+                  image_url:
+                    "https://images-ext-2.discordapp.net/external/K060jWOOgb5odhYIW0AvwF87mGj09a6mUpqczSmgf_E/https/i.ytimg.com/vi/Cz1FPlsPNBo/maxresdefault.jpg?width=993&height=559",
+                  subtitle: "We have the right hat for everyone.",
+                  default_action: {
+                    type: "web_url",
+                    url: `https://hrbaia.com/ge/applicant/vacancy/${filterjobs[0].dataValues.slug}`,
+                    webview_height_ratio: "tall",
+                  },
+                  buttons: [
+                    {
+                      type: "web_url",
+                      url: `https://hrbaia.com/ge/applicant/vacancy/${filterjobs[0].dataValues.slug}`,
+                      title: "View Website",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+
+
+      const request = await axiosInstance();
+      await deleteSession(sessionId);
+
+      await request.post(`/me/messages?access_token=${access_token}`, payload);
+
+      const response = await request.post(
+        `/me/messages?access_token=${access_token}`,
+        payloadxxxxx
+      );
+
+      return response;
+
+
+    } else {
+
+      const message = `კარგით გისურვებთ წარმატებებს `;
+
+      const payload = {
+        messaging_type: "RESPONSE",
+        recipient: {
+          id: sessionId,
+        },
+        message: {
+          text: message,
+        },
+      };
+
+      const request = await axiosInstance();
+
+      const response = await request.post(
+        `/me/messages?access_token=${access_token}`,
+        payload
+      );
+
+      return response;
+
+    }
+
+
+
+  } catch (error) { }
 }
 
 async function handlePositive() { }
@@ -208,4 +436,5 @@ module.exports = {
   handler3,
   handler4,
   handler5,
+  handler6,
 };

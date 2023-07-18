@@ -14,6 +14,8 @@ function createPayload(userId, text, data) {
     },
   };
 
+  console.log("data@@@@@@@@@@@@@",data)
+
   if (data?.length) {
     payload.message.quick_replies.push(...data);
     JSON.stringify(payload.message.quick_replies);

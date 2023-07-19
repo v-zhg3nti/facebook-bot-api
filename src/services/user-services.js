@@ -1,4 +1,4 @@
-const { damkvetebiii } = require('../models');
+const { damkvetebiii } = require('../models/index');
 
 async function createUsers(options){
   try {
@@ -7,6 +7,19 @@ async function createUsers(options){
     return user;
   } catch (error) {
     console.log("error acquired in getUser method: ", error);
+    throw error;
+  }
+}
+
+async function filterUser(sessionId) {
+  try {
+    const filterSession = await damkvetebiii.findOne({
+      where: { ...sessionId },
+      raw: true,
+    });
+    return filterSession;
+  } catch (error) {
+    console.log("error acquired in createSession method: ", error);
     throw error;
   }
 }
@@ -27,7 +40,7 @@ async function getUser(options) {
 
 async function updateUseer(userId, updateData) {
   try {
-    const updatedSession = await User.update(updateData, {
+    const updatedSession = await damkvetebiii.update(updateData, {
       where: {userId: userId },
     });
     return updatedSession;
@@ -42,6 +55,7 @@ async function updateUseer(userId, updateData) {
 module.exports = {
   getUser,
   createUsers,
-  updateUseer
+  updateUseer,
+  filterUser,
 };
 

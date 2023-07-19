@@ -40,8 +40,9 @@ async function updateSession(sessionId, updateData) {
 
 async function filterSessions(sessionId) {
   try {
-    const filterSession = await UserSession.findAll({
-      where: { sessionId: sessionId },
+    const filterSession = await UserSession.findOne({
+      where: { ...sessionId },
+      raw: true,
     });
     return filterSession;
   } catch (error) {
@@ -58,7 +59,6 @@ async function getSession(sessionId) {
       },
       { raw: true }
     );
-    console.log(session);
     return session;
   } catch (error) {
     console.log("error acquired in getSession method: ", error);

@@ -4,62 +4,66 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable('damkvetebiii', {
       id: {
-        allowNull: false,
-        autoIncrement: true,
+        type: Sequelize.INTEGER,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        autoIncrement: true,
+        allowNull: false,
       },
       saxeli: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
+      },
+      userId: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       teleponi: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       email: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       raioni: {
         type: Sequelize.STRING,
-        allowNull: true
-      },  
+        allowNull: true,
+      },
       grapiki: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       pozicia: {
         type: Sequelize.STRING,
-        allowNull: true
-      },
-      anazgaureba: {
-        type: Sequelize.STRING,
-        allowNull: true
-      },
-      asaki: {
-        type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       moqalaqeoba: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
+      },
+      anazgaureba: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      asaki: {
+        type: Sequelize.STRING,
+        allowNull: true,
       },
       ganatleba: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       movaleobebi: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       sachiroeba: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       },
       damatebiti: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: true,
       }
     });
   },

@@ -2,7 +2,6 @@ const { User } = require("../models/index");
 
 async function createUsers2(options){
   try {
-    console.log("@@@@@@@Options", options);
     const user = await User.create(options);
     return user;
   } catch (error) {
@@ -13,7 +12,6 @@ async function createUsers2(options){
 
 async function getUser2(options) {
   try {
-    console.log("@@@@@@@Options", options);
     const user = await User.findOne({ where: { ...options }, raw: true });
     return user;
   } catch (error) {

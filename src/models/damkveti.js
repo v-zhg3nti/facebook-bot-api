@@ -1,5 +1,5 @@
 'use strict';
-const { Model } = require('sequelize');
+const { Model, DatabaseError } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
   class damkvetebiii extends Model {
@@ -16,6 +16,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       saxeli: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+
+      userId: {
         type: DataTypes.STRING,
         allowNull: true,
       },

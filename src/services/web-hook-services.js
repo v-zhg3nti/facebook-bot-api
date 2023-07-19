@@ -10,10 +10,13 @@ const {
   LOOKING_FOR_STAFF,
   STAFF_SEEKER,
   NEW_USER,
+  FREQUENTLY_ASK,
+  ASK_SEEKER
 } = require("../constants/index");
 
 const jobSeekers = require("./job-seekers");
 const staffSeeker = require("./staff-seekers");
+const askSeeker= require('./ask-seeker');
 const {
   createSession,
   updateSession,
@@ -74,6 +77,20 @@ async function distributeEvents(object, messaging, userId) {
         }
         break;
       }
+      case FREQUENTLY_ASK: {
+        const sessionObject = {
+          sessionId: userId,
+          stage: 1,
+          serviceName: ASK_SEEKER,
+        };
+        try {
+          await createSession({ userId, ...sessionObject });
+          res = await askSeeker[`handler${sessionObject.stage}`](userId, messaging);
+        } catch (error) {
+          console.error("Error in distributeEvents:", error);
+        }
+        break;
+      }
       default:
         break;
     }
@@ -92,6 +109,10 @@ function serviceDistribution(serviceName) {
     case STAFF_SEEKER:
       selectedService = staffSeeker;
       break;
+    case ASK_SEEKER :
+    selectedService =askSeeker;
+    break;
+    
     default:
       break;
   }

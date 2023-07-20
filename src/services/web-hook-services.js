@@ -12,11 +12,13 @@ const {
   NEW_USER,
   FREQUENTLY_ASK,
   ASK_SEEKER
+
+
 } = require("../constants/index");
 
 const jobSeekers = require("./job-seekers");
 const staffSeeker = require("./staff-seekers");
-const askSeeker= require('./ask-seeker');
+const askSeeker = require('./ask-seeker');
 const {
   createSession,
   updateSession,
@@ -109,10 +111,10 @@ function serviceDistribution(serviceName) {
     case STAFF_SEEKER:
       selectedService = staffSeeker;
       break;
-    case ASK_SEEKER :
-    selectedService =askSeeker;
-    break;
-    
+    case ASK_SEEKER:
+      selectedService = askSeeker;
+      break;
+
     default:
       break;
   }

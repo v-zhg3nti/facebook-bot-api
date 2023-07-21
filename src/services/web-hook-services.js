@@ -11,14 +11,12 @@ const {
   STAFF_SEEKER,
   NEW_USER,
   FREQUENTLY_ASK,
-  ASK_SEEKER
-
-
+  ASK_SEEKER,
 } = require("../constants/index");
 
 const jobSeekers = require("./job-seekers");
 const staffSeeker = require("./staff-seekers");
-const askSeeker = require('./ask-seeker');
+const askSeeker = require("./ask-seeker");
 const {
   createSession,
   updateSession,
@@ -50,51 +48,59 @@ async function distributeEvents(object, messaging, userId) {
     const eventText = messaging[0]?.message?.text;
     const event = eventEraser(eventText);
 
-    switch (event) {
-      case LOOKING_FOR_JOB: {
-        const sessionObject = {
-          sessionId: userId,
-          stage: 1,
-          serviceName: JOB_SEEKERS,
-        };
-        try {
-          await createSession({ userId, ...sessionObject });
-          res = await jobSeekers[`handler${sessionObject.stage}`](userId, messaging);
-        } catch (error) {
-          console.error("Error in distributeEvents:", error);
-        }
-        break;
+    // Split your string variables by commas
+    const lookingForJobArray = LOOKING_FOR_JOB.split(",");
+    const frequentlyAskArray = FREQUENTLY_ASK.split(",");
+    const lookingForStaffArray = LOOKING_FOR_STAFF.split(",");
+
+    // Now you can check if the event is included in the arrays
+    if (lookingForJobArray.includes(event)) {
+      const sessionObject = {
+        sessionId: userId,
+        stage: 1,
+        serviceName: JOB_SEEKERS,
+      };
+      try {
+        await createSession({ userId, ...sessionObject });
+        res = await jobSeekers[`handler${sessionObject.stage}`](
+          userId,
+          messaging
+        );
+      } catch (error) {
+        console.error("Error in distributeEvents:", error);
       }
-      case LOOKING_FOR_STAFF: {
-        const sessionObject = {
-          sessionId: userId,
-          stage: 1,
-          serviceName: STAFF_SEEKER,
-        };
-        try {
-          await createSession({ userId, ...sessionObject });
-          res = await staffSeeker[`handler${sessionObject.stage}`](userId, messaging);
-        } catch (error) {
-          console.error("Error in distributeEvents:", error);
-        }
-        break;
+    } else if (lookingForStaffArray.includes(event)) {
+      const sessionObject = {
+        sessionId: userId,
+        stage: 1,
+        serviceName: STAFF_SEEKER,
+      };
+      try {
+        await createSession({ userId, ...sessionObject });
+        res = await staffSeeker[`handler${sessionObject.stage}`](
+          userId,
+          messaging
+        );
+      } catch (error) {
+        console.error("Error in distributeEvents:", error);
       }
-      case FREQUENTLY_ASK: {
-        const sessionObject = {
-          sessionId: userId,
-          stage: 1,
-          serviceName: ASK_SEEKER,
-        };
-        try {
-          await createSession({ userId, ...sessionObject });
-          res = await askSeeker[`handler${sessionObject.stage}`](userId, messaging);
-        } catch (error) {
-          console.error("Error in distributeEvents:", error);
-        }
-        break;
+    } else if (frequentlyAskArray.includes(event)) {
+      const sessionObject = {
+        sessionId: userId,
+        stage: 1,
+        serviceName: ASK_SEEKER,
+      };
+      try {
+        await createSession({ userId, ...sessionObject });
+        res = await askSeeker[`handler${sessionObject.stage}`](
+          userId,
+          messaging
+        );
+      } catch (error) {
+        console.error("Error in distributeEvents:", error);
       }
-      default:
-        break;
+    } else {
+      // Code for other cases...
     }
   }
 
@@ -137,8 +143,12 @@ async function handleWebHookFlow(object, messaging, sessionId) {
           const res = await service[`handler${stage}`](sessionId, messaging);
           return res;
         } else {
-          console.error(`Error in handleWebHookFlow: Invalid service or handler function for stage ${stage}`);
-          throw new Error(`Invalid service or handler function for stage ${stage}`);
+          console.error(
+            `Error in handleWebHookFlow: Invalid service or handler function for stage ${stage}`
+          );
+          throw new Error(
+            `Invalid service or handler function for stage ${stage}`
+          );
         }
       } catch (error) {
         console.error("Error in handleWebHookFlow:", error);

@@ -2,7 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable('jobseekers', {
       id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -37,22 +37,19 @@ module.exports = {
       },
       createdAt: {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
         allowNull: true,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updatedAt: {
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW,
         allowNull: true,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+        onUpdate: Sequelize.NOW,
       },
-    }, {
-      engine: 'InnoDB',
-      charset: 'utf8mb4',
-      collate: 'utf8mb4_0900_ai_ci',
     });
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('jobseekers');
   }
 };

@@ -1,8 +1,8 @@
-const { User } = require("../models/index");
+const { Jobseeker } = require("../models/index");
 
 async function createUsers2(options){
   try {
-    const user = await User.create(options);
+    const user = await Jobseeker.create(options);
     return user;
   } catch (error) {
     console.log("error acquired in getUser method: ", error);
@@ -12,7 +12,7 @@ async function createUsers2(options){
 
 async function getUser2(options) {
   try {
-    const user = await User.findOne({ where: { ...options }, raw: true });
+    const user = await Jobseeker.findOne({ where: { ...options }, raw: true });
     return user;
 
   } catch (error) {
@@ -23,7 +23,7 @@ async function getUser2(options) {
 
 async function updateUseer2(userId, updateData) {
   try {
-    const updatedUser = await User.update(updateData, {
+    const updatedUser = await Jobseeker.update(updateData, {
       where: { userId: userId },
     });
 

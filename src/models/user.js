@@ -4,7 +4,7 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
-      // You can define associations between models here if needed
+      // Define associations between models here if needed
     }
   }
 
@@ -15,31 +15,66 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      fio: {
+      name: {
         type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      lastname: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      initials: {
+        type: DataTypes.STRING(50),
+        defaultValue: null,
+      },
+      password: {
+        type: DataTypes.TEXT,
+        allowNull: false,
       },
       email: {
         type: DataTypes.TEXT,
+        allowNull: false,
       },
-      userId: {
+      mobile: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+      },
+      generated_code: {
+        type: DataTypes.STRING(50),
+        defaultValue: null,
+      },
+      active: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      level: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+      },
+      is_manager: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      },
+      rand: {
+        type: DataTypes.INTEGER,
+        defaultValue: null,
+      },
+      blocked: {
+        type: DataTypes.INTEGER,
+        defaultValue: null,
+      },
+      image: {
         type: DataTypes.TEXT,
       },
-      telefoni: {
+      incode: {
         type: DataTypes.TEXT,
       },
-      asaki: {
+      last_ip: {
         type: DataTypes.TEXT,
       },
-      specialoba: {
-        type: DataTypes.TEXT,
-      },
-      grafiki: {
-        type: DataTypes.TEXT,
-      },
-      anazgaureba: {
-        type: DataTypes.TEXT,
-      },
-      misamarti: {
+      comment: {
         type: DataTypes.TEXT,
       },
       createdAt: {

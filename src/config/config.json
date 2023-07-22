@@ -2,7 +2,7 @@
   "development": {
     "username": "baia_admin",
     "password": null,
-    "database": "baia_chat",
+    "database": "baia_chat2",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },

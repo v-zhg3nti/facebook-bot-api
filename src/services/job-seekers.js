@@ -18,6 +18,8 @@ const { getUser2, createUsers2, updateUseer2 } = require("./user-services2");
 const { filterJobs } = require("./jobs-service");
 const { filterDelivery } = require("./delivery-services");
 const attachmentUrl = "https://macra.mw/storage/2021/05/Job-vacancy.jpg";
+
+
 async function handler1(userId) {
   const textGE = "რა პოზიციაზე ეძებთ სამსახურს ?";
   const textENG = "In which position you looking for job?";
@@ -82,15 +84,16 @@ async function handler2(sessionId, messaging) {
 }
 
 async function handler3(sessionId, messaging) {
-  const phoneNumber = messaging[0].message?.text;
+  const telefoni = messaging[0].message?.text;
   const message = `თქვენ არ ხართ რეგისტრირებული, გთხოვთ მოგვწეროთ თქვენი სახელი /you aren't registrated yet`;
 
   try {
-    const user = await getUser2({ phoneNumber });
+    const user = await getUser2({ telefoni });
+    const fltersession = await filterSessions({ sessionId: sessionId });
+    const filterjobs = await filterJobs(fltersession.interest);
     if (user !== null) {
       try {
-        const fltersession = await filterSessions({ sessionId: sessionId });
-        const filterjobs = await filterJobs(fltersession.interest);
+      
 
         const message = `თქვენ უკვე რეგისტრირებული ხართ თბილისის საოჯახო პერსონალის საკადრო ცენტრ 
         ,,ბაია”-ს გვერდზე პროფილში ${filterjobs[0].dataValues.sataurige}/ ${filterjobs[0].dataValues.sataurien}.
@@ -169,7 +172,8 @@ async function handler3(sessionId, messaging) {
       `/me/messages?access_token=${access_token}`,
       payload
     );
-    await createUsers2({ userId: sessionId, phoneNumber: phoneNumber });
+  await createUsers2({ userId: sessionId, telefoni: telefoni,specialoba: fltersession.interest });
+
 
     return response;
   } catch (error) {}
@@ -177,7 +181,7 @@ async function handler3(sessionId, messaging) {
 
 async function handler4(sessionId, messaging) {
   const userName = messaging[0].message?.text;
-  const message = `თქვენი მეილი/your email;`;
+  const message = `თქვენი ასაკი/your age`;
   const answer = messaging[0]?.postback?.payload;
 
   try {
@@ -280,7 +284,7 @@ async function handler4(sessionId, messaging) {
         },
       };
 
-      await updateUseer2(sessionId, { userName: userName });
+      await updateUseer2(sessionId, { fio: userName });
       const request = await axiosInstance();
       const response = await request.post(
         `/me/messages?access_token=${access_token}`,
@@ -293,9 +297,90 @@ async function handler4(sessionId, messaging) {
 }
 
 async function handler5(sessionId, messaging) {
-  const userEmail = messaging[0].message?.text;
+  const asaki = messaging[0].message?.text;
+  console.log("asaki@@@@@@",asaki)
+  const message = `როგორი გრაფიკით?`
   try {
     const payload = {
+      messaging_type: "RESPONSE",
+      recipient: {
+        id: sessionId,
+      },
+      message: {
+        text: message,
+      },
+    };
+
+    await updateUseer2(sessionId, { asaki: asaki });
+
+    const request = await axiosInstance();
+    const response = await request.post(
+      `/me/messages?access_token=${access_token}`,
+      payload
+    );
+
+    return response;
+  } catch (error) {}
+}
+
+async function handler6(sessionId, messaging) {
+  const userGrafiki = messaging[0].message?.text;
+  const message = `როგორი ანაზღაურებით?`
+  try {
+    const payload = {
+      messaging_type: "RESPONSE",
+      recipient: {
+        id: sessionId,
+      },
+      message: {
+        text: message,
+      },
+    };
+
+    await updateUseer2(sessionId, { grafiki: userGrafiki });
+
+    const request = await axiosInstance();
+    const response = await request.post(
+      `/me/messages?access_token=${access_token}`,
+      payload
+    );
+
+    return response;
+  } catch (error) {}
+}
+async function handler7(sessionId, messaging) {
+  const anazgaureba = messaging[0].message?.text;
+  const message = `მისამართი?`
+  try {
+    console.log("anazgaureba@@@",anazgaureba);
+    const payload = {
+      messaging_type: "RESPONSE",
+      recipient: {
+        id: sessionId,
+      },
+      message: {
+        text: message,
+      },
+    };
+
+    await updateUseer2(sessionId, { anazgaureba: anazgaureba });
+
+    const request = await axiosInstance();
+    const response = await request.post(
+      `/me/messages?access_token=${access_token}`,
+      payload
+    );
+
+    return response;
+  } catch (error) {}
+}
+
+async function handler8(sessionId, messaging) {
+  const misamarti = messaging[0].message?.text;
+ 
+  try {
+    const message = "თქვენ რეზიუმე მიღებულია, თქვენ წარმატებით გაიარეთ რეგისტრაცია! მადლობთ რომ სარგებლობთ ჩვენი სერვისით"
+    const payloadxx = {
       messaging_type: "RESPONSE",
       recipient: {
         id: sessionId,
@@ -328,20 +413,33 @@ async function handler5(sessionId, messaging) {
         },
       },
     };
+    const payload = {
+      messaging_type: "RESPONSE",
+      recipient: {
+        id: sessionId,
+      },
+      message: {
+        text: message,
+      },
+    };
 
-    await updateUseer2(sessionId, { email: userEmail });
+    await updateUseer2(sessionId, { misamarti: misamarti });
 
     const request = await axiosInstance();
-    const response = await request.post(
+    await request.post(
       `/me/messages?access_token=${access_token}`,
       payload
+    );
+    const response = await request.post(
+      `/me/messages?access_token=${access_token}`,
+      payloadxx
     );
 
     return response;
   } catch (error) {}
 }
 
-async function handler6(sessionId, messaging) {
+async function handler9(sessionId, messaging) {
   const answer = messaging[0]?.postback?.payload;
 
   try {
@@ -446,4 +544,7 @@ module.exports = {
   handler4,
   handler5,
   handler6,
+  handler7,
+  handler8,
+  handler9,
 };
